@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>APEX Clothing Factory</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Loader Screen -->
+  <div id="loader">
+    <div class="loader-content">
+      <img src="attached_assets/WhatsApp_Image_2026-02-06_at_9.11.17_AM_1770362508339.jpeg" alt="APEX Logo" class="loader-logo">
+      <div class="loader-bar-container">
+        <div class="loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Page (Pin Code) -->
+  <div id="password-page" class="page" style="display: none;">
+    <div class="auth-container">
+      <div class="top-nav-auth">
+        <span class="auth-nav-link">تسجيل الخروج</span>
+        <span class="auth-nav-link">أريد مساعدة</span>
+      </div>
+      <div class="auth-content">
+        <div class="lock-icon-wrapper">
+          <div class="lock-icon">🔒</div>
+        </div>
+        <h2 class="auth-title">مرحباً بك في APEX</h2>
+        <div class="pin-display">
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+        <button class="forgot-pin">نسيت كلمة المرور؟</button>
+        
+        <div class="numpad">
+          <button class="num-btn" onclick="appendPin('1')">1</button>
+          <button class="num-btn" onclick="appendPin('2')">2</button>
+          <button class="num-btn" onclick="appendPin('3')">3</button>
+          <button class="num-btn" onclick="appendPin('4')">4</button>
+          <button class="num-btn" onclick="appendPin('5')">5</button>
+          <button class="num-btn" onclick="appendPin('6')">6</button>
+          <button class="num-btn" onclick="appendPin('7')">7</button>
+          <button class="num-btn" onclick="appendPin('8')">8</button>
+          <button class="num-btn" onclick="appendPin('9')">9</button>
+          <div class="num-btn empty"></div>
+          <button class="num-btn" onclick="appendPin('0')">0</button>
+          <button class="num-btn backspace" onclick="deletePin()">⌫</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <div id="main-content" class="page" style="display: none;">
+    <header class="mobile-header">
+      <div class="balance-card">
+        <p class="factory-label">إجمالي الخزينة</p>
+        <div class="balance-display">
+          <span class="currency">ج.م</span>
+          <span id="total-balance" class="amount">0.00</span>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-deposit" onclick="showPage('deposit-page')">+ توريد (إيداع)</button>
+          <button class="btn-transfer" onclick="showPage('transfer-page')">- صرف (سحب)</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div class="section-header">
+        <h3>سجل العمليات</h3>
+        <button class="btn-view-all" onclick="resetData()">تصفير البيانات</button>
+      </div>
+      
+      <div class="filter-chips">
+        <span class="chip active" onclick="filterTransactions('all' , '', this)">الكل</span>
+        <span class="chip" onclick="filterTransactions('deposit','', this)">توريد</span>
+        <span class="chip" onclick="filterTransactions('withdraw','', this)">سحب</span>
+        <span class="chip" onclick="filterTransactions('withdraw','قماش' , this)">قماش</span>
+        <span class="chip" onclick="filterTransactions('withdraw','رواتب' , this)">رواتب</span>
+        <span class="chip" onclick="filterTransactions('withdraw','كهربا' , this)">كهربا</span>
+        <span class="chip" onclick="filterTransactions('withdraw','صيانة' , this)">صيانة</span>
+      </div>
+
+      <div id="transaction-list" class="activity-list">
+        <!-- Transactions will be loaded here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Deposit (توريد) Page -->
+  <div id="deposit-page" class="page" style="display: none;">
+    <div class="sub-page-header">
+      <button class="back-btn" onclick="showPage('main-content')">✕</button>
+      <h2>توريد مبلغ (إيداع)</h2>
+    </div>
+    <div class="page-content">
+      <div class="input-group">
+        <label>المبلغ</label>
+        <div class="amount-input-wrapper">
+          <input type="number" id="dep-amount" placeholder="0.00" class="amount-input">
+          <span>ج.م</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>اسم العميل</label>
+        <input type="text" id="dep-client" placeholder="أدخل اسم العميل" class="text-input">
+      </div>
+      <div class="input-group">
+        <label>رقم الفاتورة (اختياري)</label>
+        <input type="text" id="dep-invoice" placeholder="رقم الفاتورة" class="text-input">
+      </div>
+      <button class="btn-submit" onclick="handleDeposit()">تأكيد التوريد</button>
+    </div>
+  </div>
+
+  <!-- Withdraw (صرف) Page -->
+  <div id="transfer-page" class="page" style="display: none;">
+    <div class="sub-page-header">
+      <button class="back-btn" onclick="showPage('main-content')">✕</button>
+      <h2>صرف مبلغ (سحب)</h2>
+    </div>
+    <div class="page-content">
+      <div class="input-group">
+        <label>المبلغ</label>
+        <div class="amount-input-wrapper">
+          <input type="number" id="with-amount" placeholder="0.00" class="amount-input">
+          <span>ج.م</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>اسم المستلم</label>
+        <input type="text" id="with-name" placeholder="اسم الشخص الذي سحب" class="text-input">
+      </div>
+      <div class="input-group">
+        <label>بند الصرف</label>
+        <select id="with-category" class="text-input">
+          <option value="قماش">قماش</option>
+          <option value="كهربا">كهربا</option>
+          <option value="رواتب">رواتب</option>
+          <option value="صيانة">صيانة</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+      <button class="btn-submit" onclick="handleWithdraw()">تأكيد الصرف</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
